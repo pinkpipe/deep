@@ -5,14 +5,43 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # 1. Установка всех зависимостей
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Оригинальные зависимости
+    libgl1-mesa-glx \
+    libegl1-mesa \
+    libxrandr2 \
+    libxss1 \
+    libxcursor1 \
+    libxcomposite1 \
+    libasound2 \
+    libxi6 \
+    libxtst6 \
+    curl \
+    ffmpeg \
     git \
+    nano \
+    gnupg2 \
+    libsm6 \
+    wget \
+    unzip \
+    libxcb-icccm4 \
+    libxkbcommon-x11-0 \
+    libxcb-keysyms1 \
+    libxcb-render0 \
+    libxcb-render-util0 \
+    libxcb-image0 \
+    # Добавленные новые зависимости
     python3 \
     python3-pip \
     python3-dev \
-    libgl1-mesa-glx \
-    libxcb-xinerama0 \
-    libxcb-cursor0 \
-    libxkbcommon-x11-0 \
+    libdbus-1-3 \
+    libglib2.0-0 \
+    libfontconfig1 \
+    libfreetype6 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxext6 \
+    libxfixes3 \
+    libxrender1 \
     && rm -rf /var/lib/apt/lists/*
 
 # 2. Создание симлинков (с проверкой существования)
