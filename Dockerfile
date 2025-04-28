@@ -3,7 +3,7 @@ FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu20.04
 WORKDIR /app
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Установка всех зависимостей
+# 1. Установка всех зависимостей
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     python3 \
@@ -15,15 +15,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxkbcommon-x11-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Создание симлинков
-RUN ln -s /usr/bin/python3 /usr/bin/python && \
-    ln -s /usr/bin/pip3 /usr/bin/pip
+# 2. Создание симлинков (с проверкой существования)
+RUN [ ! -f /usr/bin/python ] && ln -s /usr/bin/python3 /usr/bin/python || true
+RUN [ ! -f /usr/bin/pip ] && ln -s /usr/bin/pip3 /usr/bin/pip || true
 
-# Клонирование репозитория
+# 3. Клонирование репозитория
 RUN git clone https://github.com/iperov/DeepFaceLive.git
 
-# Установка Python-пакетов
-RUN pip install --upgrade pip && \
+# 4. Установка Python-пакетов
+RUN python -m pip install --upgrade pip && \
     pip install \
     onnxruntime-gpu==1.15.1 \
     numpy==1.21.6 \
@@ -34,9 +34,9 @@ RUN pip install --upgrade pip && \
 
 WORKDIR /app/DeepFaceLive
 
-# Переменные окружения
+# 5. Переменные окружения
 ENV CUDA_VISIBLE_DEVICES=0
 ENV QT_QPA_PLATFORM=xcb
 
-# Точка входа
+# 6. Точка входа
 CMD ["./example.sh"]
