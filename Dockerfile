@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxcb-cursor0 \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Создаем симлинки для python и pip
+# 2. Создаем симлинки
 RUN ln -s /usr/bin/python3 /usr/local/bin/python && \
     ln -s /usr/bin/pip3 /usr/local/bin/pip
 
@@ -22,7 +22,7 @@ RUN ln -s /usr/bin/python3 /usr/local/bin/python && \
 RUN git clone https://github.com/iperov/DeepFaceLive.git
 
 # 4. Установка Python-зависимостей
-RUN python -m pip install --upgrade pip && \
+RUN pip install --upgrade pip && \
     pip install \
     onnxruntime-gpu==1.15.1 \
     numpy==1.21.6 \
@@ -42,4 +42,5 @@ WORKDIR /app/DeepFaceLive
 ENV CUDA_VISIBLE_DEVICES=0
 ENV QT_QPA_PLATFORM=xcb
 
-CMD ["python", "main.py", "run", "DeepFaceLive"]
+# 6. Точка входа с указанием папки данных
+CMD ["python", "main.py", "run", "DeepFaceLive", "--userdata-dir", "/data"]
