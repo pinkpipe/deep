@@ -39,14 +39,17 @@ RUN apt update && apt -y install \
     libxkbcommon-x11-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Добавленные новые зависимости
-RUN apt -y install \
+# Обновленные зависимости
+RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
     libxcb-xinerama0 \
-    libnvidia-compute-$NV_VER \
+    libxcb-cursor0 \
     libglvnd0 \
-    libopengl0
+    libgl1-mesa-glx \
+    libegl1-mesa \
+    libnvidia-compute-$(echo $NV_VER | cut -d. -f1) \
+    && rm -rf /var/lib/apt/lists/*
 
 # Создаем симлинк python
 RUN ln -s /usr/bin/python3 /usr/bin/python
