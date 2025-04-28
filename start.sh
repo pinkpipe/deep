@@ -8,34 +8,32 @@ if [ -z "$NV_LIB" ]; then
 fi
 NV_VER=$(modinfo "$NV_LIB" | grep ^version | awk '{print $2}' | cut -d. -f1)
 
-# Настройка папки данных (автосоздание при отсутствии)
+# Настройка данных
 DATA_FOLDER=$(realpath "${1:-./data}")
 mkdir -p "$DATA_FOLDER"
 
-# Автоподключение всех доступных камер
+# Подключение камер
 CAMERA_DEVICES=()
 for dev in /dev/video*; do
     [ -e "$dev" ] && CAMERA_DEVICES+=("--device=$dev:$dev")
 done
 
-# Временное разрешение X11 (только для локального docker)
+# Разрешение X11
 xhost +local:docker
 
-# Сборка образа с передачей версии драйвера
+# Сборка образа
 docker build . -t deepfacelive --build-arg NV_VER="$NV_VER" || {
     echo "Docker build failed!"
     exit 1
 }
 
-# Запуск контейнера с разделением GPU:
-# - Tesla P4 (device=0) для CUDA
-# - RX 580 для GUI через Mesa
+# Запуск контейнера
 docker run \
     --ipc host \
-    --gpus '"device=0"' \          # Только Tesla P4
+    --gpus '"device=0"' \
     -e DISPLAY \
     -e QT_X11_NO_MITSHM=1 \
-    -e __GLX_VENDOR_LIBRARY_NAME=mesa \  # Форсируем AMD для OpenGL
+    -e __GLX_VENDOR_LIBRARY_NAME=mesa \
     -e VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/radeon_icd.x86_64.json \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v "$DATA_FOLDER:/data" \
@@ -43,5 +41,5 @@ docker run \
     --rm -it \
     deepfacelive
 
-# Откат разрешений X11
+# Отмена разрешений
 xhost -local:docker
