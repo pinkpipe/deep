@@ -3,7 +3,7 @@ FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu20.04
 WORKDIR /app
 ARG DEBIAN_FRONTEND=noninteractive
 
-# 1. Установка системных зависимостей
+# Установка всех зависимостей
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     python3 \
@@ -12,35 +12,31 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1-mesa-glx \
     libxcb-xinerama0 \
     libxcb-cursor0 \
+    libxkbcommon-x11-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Создаем симлинки
-RUN ln -s /usr/bin/python3 /usr/local/bin/python && \
-    ln -s /usr/bin/pip3 /usr/local/bin/pip
+# Создание симлинков
+RUN ln -s /usr/bin/python3 /usr/bin/python && \
+    ln -s /usr/bin/pip3 /usr/bin/pip
 
-# 3. Клонирование репозитория
+# Клонирование репозитория
 RUN git clone https://github.com/iperov/DeepFaceLive.git
 
-# 4. Установка Python-зависимостей
+# Установка Python-пакетов
 RUN pip install --upgrade pip && \
     pip install \
     onnxruntime-gpu==1.15.1 \
     numpy==1.21.6 \
-    h5py \
-    numexpr \
     protobuf==3.20.3 \
     opencv-python==4.8.0.74 \
-    opencv-contrib-python==4.8.0.74 \
     pyqt6==6.5.1 \
-    onnx==1.14.0 \
-    torch==1.13.1+cu117 --extra-index-url https://download.pytorch.org/whl/cu117 \
-    torchvision==0.14.1+cu117 --extra-index-url https://download.pytorch.org/whl/cu117
+    torch==1.13.1+cu117 --extra-index-url https://download.pytorch.org/whl/cu117
 
 WORKDIR /app/DeepFaceLive
 
-# 5. Переменные окружения
+# Переменные окружения
 ENV CUDA_VISIBLE_DEVICES=0
 ENV QT_QPA_PLATFORM=xcb
 
-# 6. Точка входа с указанием папки данных
-CMD ["python", "main.py", "run", "DeepFaceLive", "--userdata-dir", "/data"]
+# Точка входа
+CMD ["./example.sh"]
