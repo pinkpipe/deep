@@ -1,10 +1,11 @@
 #!/bin/bash
 # Установка переменных окружения для Qt
 export QT_QPA_PLATFORM=xcb
-export QT_DEBUG_PLUGINS=1  # Для диагностики
+export QT_DEBUG_PLUGINS=0
 
-# Проверка доступных плагинов
-python -c "from PyQt6.QtCore import QCoreApplication; app = QCoreApplication([]); print('Qt plugins:', app.libraryPaths())"
+# Проверка и создание папки данных
+DATA_DIR="${1:-/data}"
+mkdir -p "$DATA_DIR"
 
 # Запуск приложения
-python main.py run DeepFaceLive --userdata-dir /data/
+exec python main.py run DeepFaceLive --userdata-dir "$DATA_DIR"
