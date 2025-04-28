@@ -30,7 +30,14 @@ RUN apt update && apt -y install \
     libxcb-icccm4 \
     libxcb-render0 \
     libxcb-render-util0 \
-    libxcb-image0
+    libxcb-image0 \
+    libxcb-cursor0 \
+    libxcb-xinerama0 \
+    libxcb-xinput0 \
+    libxcb-randr0 \
+    libxcb-icccm4 \
+    libxkbcommon-x11-0 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Добавленные новые зависимости
 RUN apt -y install \
